@@ -5,8 +5,26 @@ import os
 import requests
 import streamlit.components.v1 as components
 
+client_id = "cc_classic_yYZ7nkTZeRyAgE2y5X8JkKyJ5rdg"
+client_secret = "cc_sk_classic_DOxZ12IT3NqMNmPO90O7rrAIKoJ2zJOhnH8tQI6yL59EIHySPW"
+
+response = requests.post(
+    "https://api.sumup.com/token",
+    auth=(client_id, client_secret),
+    data={
+        "grant_type": "client_credentials"
+    }
+)
+
+if response.status_code == 200:
+    token = response.json()["access_token"]
+    print("ACCESS_TOKEN =", token)
+else:
+    print("Erreur :", response.status_code, response.text)
+
+
 # Paramètres SumUp (à personnaliser)
-ACCESS_TOKEN = "sup_pk_0o9AJuiagvIr7Ho0FdYTKKW5Y1wqVGB2i"  # 🔐 À remplacer par le tien
+ACCESS_TOKEN = ""  # 🔐 À remplacer par le tien
 CALLBACK_URL = "https://api.sumup.com"  # 🔄 Redirection après paiement
 SUMUP_EMAIL = "ton-email-sumup@example.com"  # 📧 Ton email marchand SumUp
 
