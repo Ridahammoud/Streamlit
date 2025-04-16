@@ -3,7 +3,14 @@ import pandas as pd
 from datetime import datetime
 import os
 import requests
+import streamlit.components.v1 as components
 
+# Paramètres SumUp (à personnaliser)
+ACCESS_TOKEN = "TON_ACCESS_TOKEN_SUMUP"  # 🔐 À remplacer par le tien
+CALLBACK_URL = "https://tonapp.com/merci"  # 🔄 Redirection après paiement
+SUMUP_EMAIL = "ton-email-sumup@example.com"  # 📧 Ton email marchand SumUp
+
+# 🔗 Fonction pour créer le lien de paiement
 def creer_lien_paiement(prix, nom_client):
     url = "https://api.sumup.com/v0.1/checkouts"
     headers = {
@@ -14,7 +21,7 @@ def creer_lien_paiement(prix, nom_client):
         "checkout_reference": f"commande-{datetime.now().timestamp()}",
         "amount": prix,
         "currency": "EUR",
-        "pay_to_email": "ton-email-sumup@example.com",  # ton email marchand SumUp
+        "pay_to_email": SUMUP_EMAIL,
         "description": f"Commande de {nom_client}",
         "return_url": CALLBACK_URL
     }
@@ -26,9 +33,10 @@ def creer_lien_paiement(prix, nom_client):
         st.write(response.text)
         return None
 
+# 🛒 Interface client
 st.title("Formulaire de commande")
 
-# Données du client
+# Infos client
 pseudo = st.text_input("Pseudo TikTok")
 nom = st.text_input("Nom")
 prenom = st.text_input("Prénom")
@@ -45,13 +53,17 @@ produits = {
 produit_choisi = st.selectbox("Produit", list(produits.keys()))
 quantite = st.number_input("Quantité", min_value=1, value=1)
 
+# ✅ Validation commande
 if st.button("Valider la commande"):
     if not nom or not email or not adresse:
         st.warning("Merci de remplir tous les champs.")
     else:
         commande = {
             "datetime": datetime.now().isoformat(),
+            "pseudo": pseudo,
             "nom": nom,
+            "prenom": prenom,
+            "tel": tel,
             "email": email,
             "adresse": adresse,
             "produit": produit_choisi,
@@ -60,33 +72,24 @@ if st.button("Valider la commande"):
             "payé": False
         }
 
-        # Enregistrement dans le CSV...
-        # (code que tu as déjà mis pour ajouter la commande)
+        # 💾 Sauvegarde dans le CSV
+        if os.path.exists("commandes.csv"):
+            df = pd.read_csv("commandes.csv")
+        else:
+            df = pd.DataFrame()
 
-        # 🔐 Création du lien SumUp
+        df = pd.concat([df, pd.DataFrame([commande])], ignore_index=True)
+        df.to_csv("commandes.csv", index=False)
+
+        # 🔗 Création lien SumUp
         lien_paiement = creer_lien_paiement(commande["prix_total"], nom)
 
         if lien_paiement:
             st.success("Commande enregistrée ! Redirection vers le paiement en cours...")
-
-            import streamlit.components.v1 as components
             components.html(f"""
                 <script>
                     window.location.href = "{lien_paiement}";
                 </script>
             """)
-
-
-# Script pour redirection
-js = f"""
-<script>
-    window.location.href = "{lien_paiement}";
-</script>
-"""
-st.components.v1.html(js)
-
-# Paramètres SumUp
-ACCESS_TOKEN = "TON_ACCESS_TOKEN_SUMUP"  # remplace par le tien
-CALLBACK_URL = "https://tonapp.com/merci"  # URL vers laquelle rediriger le client après paiement
-
-
+        else:
+            st.error("Impossible de générer le lien de paiement.")
