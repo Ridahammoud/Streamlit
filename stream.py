@@ -6,8 +6,8 @@ import requests
 import streamlit.components.v1 as components
 
 # Paramètres SumUp (à personnaliser)
-ACCESS_TOKEN = "TON_ACCESS_TOKEN_SUMUP"  # 🔐 À remplacer par le tien
-CALLBACK_URL = "https://tonapp.com/merci"  # 🔄 Redirection après paiement
+ACCESS_TOKEN = "sup_pk_0o9AJuiagvIr7Ho0FdYTKKW5Y1wqVGB2i"  # 🔐 À remplacer par le tien
+CALLBACK_URL = "https://api.sumup.com"  # 🔄 Redirection après paiement
 SUMUP_EMAIL = "ton-email-sumup@example.com"  # 📧 Ton email marchand SumUp
 
 # 🔗 Fonction pour créer le lien de paiement
