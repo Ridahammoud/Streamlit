@@ -51,6 +51,17 @@ if st.button("Valider la commande"):
 
         st.success("Commande enregistrée ! Vous allez être redirigé vers le paiement ensuite.")
 
+# Redirection automatique
+st.success("Commande enregistrée ! Redirection vers le paiement en cours...")
+
+# Script pour redirection
+js = f"""
+<script>
+    window.location.href = "{lien_paiement}";
+</script>
+"""
+st.components.v1.html(js)
+
 # Paramètres SumUp
 ACCESS_TOKEN = "TON_ACCESS_TOKEN_SUMUP"  # remplace par le tien
 CALLBACK_URL = "https://tonapp.com/merci"  # URL vers laquelle rediriger le client après paiement
