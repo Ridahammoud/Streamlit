@@ -22,12 +22,6 @@ if response.status_code == 200:
 else:
     print("Erreur :", response.status_code, response.text)
 
-
-# Paramètres SumUp (à personnaliser)
-ACCESS_TOKEN = ""  # 🔐 À remplacer par le tien
-CALLBACK_URL = "https://api.sumup.com"  # 🔄 Redirection après paiement
-SUMUP_EMAIL = "ton-email-sumup@example.com"  # 📧 Ton email marchand SumUp
-
 # 🔗 Fonction pour créer le lien de paiement
 def creer_lien_paiement(prix, nom_client):
     url = "https://api.sumup.com/v0.1/checkouts"
