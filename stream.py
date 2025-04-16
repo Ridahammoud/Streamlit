@@ -6,11 +6,14 @@ import os
 st.title("Formulaire de commande")
 
 # Données du client
-nom = st.text_input("Nom complet")
+pseudo = st.text_input("Pseudo TikTok")
+nom = st.text_input("Nom")
+prenom = st.text_input("Prénom")
+tel = st.text_input("Téléphone N°")
 email = st.text_input("Email")
 adresse = st.text_area("Adresse de livraison")
 
-# Produits (à adapter selon ton catalogue)
+# Produits
 produits = {
     "Produit A": 20,
     "Produit B": 30,
