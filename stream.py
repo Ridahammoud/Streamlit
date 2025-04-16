@@ -23,7 +23,6 @@ produits = {
 produit_choisi = st.selectbox("Produit", list(produits.keys()))
 quantite = st.number_input("Quantité", min_value=1, value=1)
 
-# Bouton de validation
 if st.button("Valider la commande"):
     if not nom or not email or not adresse:
         st.warning("Merci de remplir tous les champs.")
@@ -36,23 +35,25 @@ if st.button("Valider la commande"):
             "produit": produit_choisi,
             "quantite": quantite,
             "prix_total": produits[produit_choisi] * quantite,
-            "payé": False  # Par défaut
+            "payé": False
         }
 
-        # Création du fichier CSV si nécessaire
-        path_csv = "commandes.csv"
-        if os.path.exists(path_csv):
-            df = pd.read_csv(path_csv)
-        else:
-            df = pd.DataFrame()
+        # Enregistrement dans le CSV...
+        # (code que tu as déjà mis pour ajouter la commande)
 
-        df = pd.concat([df, pd.DataFrame([commande])], ignore_index=True)
-        df.to_csv(path_csv, index=False)
+        # 🔐 Création du lien SumUp
+        lien_paiement = creer_lien_paiement(commande["prix_total"], nom)
 
-        st.success("Commande enregistrée ! Vous allez être redirigé vers le paiement ensuite.")
+        if lien_paiement:
+            st.success("Commande enregistrée ! Redirection vers le paiement en cours...")
 
-# Redirection automatique
-st.success("Commande enregistrée ! Redirection vers le paiement en cours...")
+            import streamlit.components.v1 as components
+            components.html(f"""
+                <script>
+                    window.location.href = "{lien_paiement}";
+                </script>
+            """)
+
 
 # Script pour redirection
 js = f"""
